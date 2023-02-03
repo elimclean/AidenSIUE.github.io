@@ -99,7 +99,7 @@ function loop() {
   if ( (ball.x < 0 || ball.x > canvas.width) && !ball.resetting) {
     ball.resetting = true;
     if(ball.x < 0 && currentVolley > 0)
-      document.getElementById('score2').innerHTML = parseInt(document.getElementById('score1').innerHTML) + 1;
+      document.getElementById('score2').innerHTML = parseInt(document.getElementById('score2').innerHTML) + 1;
     else if(ball.x > canvas.width && currentVolley > 0)
       document.getElementById('score1').innerHTML = parseInt(document.getElementById('score1').innerHTML) + 1;
 
