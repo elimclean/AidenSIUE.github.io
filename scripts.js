@@ -4,8 +4,8 @@ const grid = 15;
 const paddleHeight = grid * 5; // 80
 const maxPaddleY = canvas.height - grid - paddleHeight;
 
-var paddleSpeed = 6;
-var ballSpeed = 5;
+var paddleSpeed = 5;
+var ballSpeed = 6;
 var currentVolley = 0;
 
 const leftPaddle = {
@@ -52,12 +52,45 @@ function collides(obj1, obj2) {
          obj1.y + obj1.height > obj2.y;
 }
 
+// new functions -- eli mclean
+function move(){
+// cpu paddle will move slower, so he's not unbeatable
+  if(ball.y > leftPaddle.y){
+    leftPaddle.dy = paddleSpeed*.75;
+  }
+  else if(ball.y < leftPaddle.y){
+    leftPaddle.dy = -(paddleSpeed*.75);
+  }
+}
+ function endGame(){
+  	context.fillStyle = 'red';
+  	context.fillRect(175,200,400,200);
+    context.fillStyle = 'Black';
+  	context.font = '25px arial';
+  	context.fillText("Game over", 305, 260);
+    playAgain();
+}
+function playAgain(){
+   context.fillText("Press Enter to play again",240,350);
+   document.addEventListener('keydown', function(e) {
+  	if (e.which === 13) {
+    		location.reload();
+    	}
+	});
+}
 // game loop
 function loop() {
   requestAnimationFrame(loop);
   context.clearRect(0,0,canvas.width,canvas.height);
-
+  if(document.getElementById('score2').innerHTML == 7 ||
+     document.getElementById('score1').innerHTML == 7){
+      ball.dx = 0;
+      ball.dy = 0;
+      leftPaddle.dy = 0;
+      endGame();
+     }
   // move paddles by their velocity
+  move();
   leftPaddle.y += leftPaddle.dy;
   rightPaddle.y += rightPaddle.dy;
 
@@ -99,7 +132,7 @@ function loop() {
   if ( (ball.x < 0 || ball.x > canvas.width) && !ball.resetting) {
     ball.resetting = true;
     if(ball.x < 0 && currentVolley > 0)
-      document.getElementById('score2').innerHTML = parseInt(document.getElementById('score1').innerHTML) + 1;
+      document.getElementById('score2').innerHTML = parseInt(document.getElementById('score2').innerHTML) + 1;
     else if(ball.x > canvas.width && currentVolley > 0)
       document.getElementById('score1').innerHTML = parseInt(document.getElementById('score1').innerHTML) + 1;
 
@@ -119,7 +152,7 @@ function loop() {
     
     currentVolley = 0;
   }
-  
+
   // check to see if ball collides with paddle. if they do change x velocity
   if (collides(ball, leftPaddle)) {
     ball.dx *= -1;
@@ -133,7 +166,7 @@ function loop() {
   else if (collides(ball, rightPaddle)) {
     ball.dx *= -1;
     
-    currentVolley +=1; 
+    currentVolley +=1;
     
     // move ball next to the paddle otherwise the collision will happen again
     // in the next frame
@@ -156,7 +189,6 @@ function loop() {
 
 // listen to keyboard events to move the paddles
 document.addEventListener('keydown', function(e) {
-
   // up arrow key
   if (e.which === 38) {
     rightPaddle.dy = -paddleSpeed;
@@ -164,17 +196,15 @@ document.addEventListener('keydown', function(e) {
   // down arrow key
   else if (e.which === 40) {
     rightPaddle.dy = paddleSpeed;
-  }
-
-    leftPaddle.dy = ball.y;
- 
+  } 
 });
-
+  
 // listen to keyboard events to stop the paddle if key is released
 document.addEventListener('keyup', function(e) {
   if (e.which === 38 || e.which === 40) {
     rightPaddle.dy = 0;
   }
+  
 });
 
 // start the game
